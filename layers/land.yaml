@@ -1,32 +1,47 @@
 layers:
-
     earth:
-        data: { source: mapzen}
+        data: { source: mapbox }
         draw:
             polygons:
-                order: global.sort_rank
+                order: 10 # TODO
                 color: global.earth_color
 
-    boundaries:
-        data: { source: mapzen}
-        filter: { kind: country }
+    admin:
+        data: { source: mapbox}
+        filter: [ admin_level: [2, 3] ]
         draw:
             boundary_dashes:
-                order: global.sort_rank
+                order: 200 # TODO
                 color: global.boundary_color
                 width: 1px
 
     water:
-        data: { source: mapzen}
-        filter: {not: {is_tunnel: true}}
+        data: { source: mapbox}
+        filter: {not: {structure: tunnel} }
 
         draw:
             lines:
-                order: global.sort_rank
+                order: 200 # TODO
                 join: round
                 cap: square
 
-        shore_lines:
+        water_areas:
+            draw:
+                polygons:
+                    order: 10 # TODO
+                    color: global.water_color
+
+    waterway:
+        data: { source: mapbox}
+        filter: {not: {structure: tunnel} }
+
+        draw:
+            lines:
+                order: 20 # TODO
+                join: round
+                cap: square
+
+        shore_lines: # TODO: not visible currently (don't know if this will work)
             filter: { boundary: false, $zoom: { min: 16 }, area: { min: 700 } }
             draw:
                 lines-coast:
@@ -34,66 +49,47 @@ layers:
                     width: [[16,20px],[18,10m]] # actually visually 1/3
                     color: global.water_color
 
-        river_lines:
-            filter: { kind: [river, canal] }
-            draw:
-                lines:
-                    color: global.water_color
-                    width: [[10, 1px], [17, 6px], [18, 12m]]
-
         stream_lines:
-            filter: { kind: [stream, ditch, drain], $zoom: { min: 15 }}
+            filter: { class: [stream, ditch, drain], $zoom: { min: 15 }}
             draw:
                 lines:
                     color: global.water_color
                     width: [[15, 1px], [17, 2px], [18, 5m]]
 
-        water_areas:
-            draw:
-                polygons:
-                    order: global.sort_rank
-                    color: global.water_color
 
-
-    buildings:
-        data: { source: mapzen}
-        filter: {not: { location: underground }, $zoom: { min: 16 } }
+    building:
+        data: { source: mapbox}
+        filter: { [ underground: false ], $zoom: { min: 16 } }
 
         draw:
             buildings-style:
-                order: global.sort_rank
+                order: 50 # TODO
                 color: global.building_color
                 extrude: true
             buildings-outline-style:
-                order: function() { return feature.sort_rank+1; }
+                order: 60 # TODO
                 color: global.building_outline_color
                 width: [[16, 1px], [18,2px], [19,4px]]
                 extrude: true
 
+    barrier_line:
+        data: { source: mapbox}
+        filter: { class: [fence, gate, hedge], $zoom: { min: 16 } }
+        draw:
+            buildings-outline-style:
+                order: 100 # TODO
+                color: global.building_outline_color
+                width: [[15, 1px], [18, 2m]]
+
     landuse:
-        data: { source: mapzen}
+        data: { source: mapbox}
         draw:
             polygons:
-                order: global.sort_rank
+                order: 5 # TODO
                 color: global.landuse_color
 
-        city_walls:
-            filter: { kind: [city_wall, dam] }
-            draw:
-                buildings-outline-style:
-                    order: global.sort_rank
-                    color: global.building_outline_color
-                    width: [[12, 4px], [18, 8m]]
-        walls:
-            filter: { kind: [wall, retaining_wall, fence] }
-            draw:
-                buildings-outline-style:
-                    order: global.sort_rank
-                    color: global.building_outline_color
-                    width: [[15, 1px], [18, 2m]]
-
-        squares:
-            filter: { kind: [pedestrian], $zoom: { min: 17 } }
+        squares: # TODO: check if this works
+            filter: { type: [pedestrian], $zoom: { min: 17 } }
             draw:
                 lines:
                     color: global.square_outline_color
