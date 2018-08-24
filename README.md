@@ -22,7 +22,7 @@ If you start to edit the style keep in mind that:
 
 ## Contributing
 
-* Open the code in Tangram Play ([Normal map](https://tangram.city/play/?scene=https://raw.githubusercontent.com/ENT8R/streetcomplete-mapstyle/master/streetcomplete-light-style.yaml),  [Satellite map](https://tangram.city/play/?scene=https://raw.githubusercontent.com/ENT8R/streetcomplete-mapstyle/master/streetcomplete-satellite-style.yaml), [Dark map](https://tangram.city/play/?scene=https://raw.githubusercontent.com/ENT8R/streetcomplete-mapstyle/master/streetcomplete-dark-style.yaml))
+* Open the code in Tangram Play ([Normal map](https://tangram.city/play/?scene=https://raw.githubusercontent.com/ENT8R/streetcomplete-mapstyle/mapbox/streetcomplete-light-style.yaml),  [Satellite map](https://tangram.city/play/?scene=https://raw.githubusercontent.com/ENT8R/streetcomplete-mapstyle/mapbox/streetcomplete-satellite-style.yaml), [Dark map](https://tangram.city/play/?scene=https://raw.githubusercontent.com/ENT8R/streetcomplete-mapstyle/mapbox/streetcomplete-dark-style.yaml))
 * Change or add something to the style
 * Download the file after you did your work
 * Make a pull request to this repository
@@ -31,6 +31,5 @@ If you start to edit the style keep in mind that:
 
 * [Tangram documentation](https://mapzen.com/documentation/tangram/)
 * [Tangram Play](https://tangram.city/play/)
-* [View normal map](https://map-data.de/#style=streetcomplete-light)
-* [View dark map](https://map-data.de/#style=streetcomplete-dark)
+* [View map](https://ent8r.github.io/streetcomplete-mapstyle)
 * [Issue #183 of StreetComplete](https://github.com/westnordost/StreetComplete/issues/183) (The reason why this repository was created)
