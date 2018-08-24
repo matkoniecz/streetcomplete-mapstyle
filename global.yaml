@@ -36,7 +36,7 @@ global:
             return feature.min_zoom <= $zoom
         }
 
-    sort_rank: function() { return feature.sort_rank; }
+    sort_rank: function() { return feature.z_order; }
 
 scene:
     animated: false
@@ -56,9 +56,10 @@ lights:
         ambient: 0.7
 
 sources:
-    mapzen:
+    terrestris:
         type: MVT
-        url: https://tiles.map-data.de/vector/v1/512/all/{z}/{x}/{y}.mvt
+        url: https://ows.terrestris.de/osm-vectortiles/osm:osm_world_vector@mapbox-vector-tiles@pbf/{z}/{x}/{y}.pbf
+        tms: true
 
 fonts:
     Montserrat:

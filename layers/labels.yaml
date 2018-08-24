@@ -1,6 +1,6 @@
 layers:
     roads:
-        data: { source: mapzen}
+        data: { source: terrestris}
         roads-labels:
             filter: { $zoom: { min: 14 } }
             draw:
@@ -16,8 +16,8 @@ layers:
                         size: global.text_size
                         stroke: global.text_stroke
 
-    places:
-        data: { source: mapzen}
+    osm_places:
+        data: { source: terrestris}
         places-labels:
             filter: { name: true }
             draw:
@@ -29,15 +29,15 @@ layers:
                         family: global.text_font_family
                         stroke: global.text_places_stroke
 
-    buildings:
-        data: { source: mapzen}
-        address-labels:
-            filter: { $zoom: { min: 19 }, kind: address }
-            draw:
-                text:
-                    text_source: addr_housenumber
-                    font:
-                        fill: global.text_fill_color
-                        family: global.text_font_family
-                        size: global.text_size
-                        stroke: global.text_stroke
+    housenumbers:
+        # TODO: this does not work yet (is this information supplied at all?)
+        data: { source: terrestris, layer: [ osm_housenumbers, housenumbers ] }
+        filter: { $zoom: { min: 19 } }
+        draw:
+            text:
+                text_source: 'addr:housenumber'
+                font:
+                    fill: global.text_fill_color
+                    family: global.text_font_family
+                    size: global.text_size
+                    stroke: global.text_stroke

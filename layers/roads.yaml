@@ -1,7 +1,7 @@
 layers:
     railway:
-        filter: { kind: rail, not: { is_tunnel: true } }
-        data: { source: mapzen , layer: roads}
+        filter: { type: rail, not: { tunnel: '1' } }
+        data: { source: terrestris , layer: osm_roads}
         draw:
             lines-railway-style:
                 order: global.sort_rank
@@ -9,87 +9,89 @@ layers:
                 join: round
                 width: [[10, 0.5px], [12, 1.0px], [13, 2px], [18, 3m]]
         service:
-            filter: { service: true }
+            filter: function() { return feature.service != ''; }
             draw:
                 lines-railway-style:
                     width: [[10, 0.2px], [12, 0.5px], [13, 1px], [18, 1.5m]]
+        # TODO: seems like this data is not available
         tram:
-            filter: { kind_detail: tram }
+            filter: { type: tram }
             draw:
                 lines-railway-style:
-                    order: function() { return feature.sort_rank+100; }
+                    order: function() { return feature.z_order+100; }
 
     roads:
-        data: { source: mapzen}
+        data: { source: terrestris, layer: [osm_roads, osm_roads_gen0, osm_roads_gen1 ]}
         filter:
             not:
-                - kind: [rail, ferry, aerialway, piste]
-                - kind_detail: [sidewalk]
-                - is_tunnel: true
+                - type: [rail, ferry, aerialway, piste]
+                - tunnel: '1'
         draw:
             lines:
-                order: global.sort_rank
+                # 50 is added here because otherwise some elements of the
+                # landuse layer would be above the roads
+                order: function() { return feature.z_order+50; }
                 join: round
                 cap: round
                 color: global.road_color
                 width: [[5, 1px], [12, 2px], [16, 5px], [17, 8m]]
 
+        # TODO: this is not displayed
         aeroway:
-            filter: { kind: aeroway }
+            filter: { type: aeroway }
             draw:
                 lines:
-                    order: global.sort_rank
                     width: 80m
 
         highway:
-            filter: { kind: highway, not: { is_link: true } }
+            filter: { type: motorway }
             draw:
                 lines:
                     width: [[8, 2px], [14, 5px], [15, 30m]]
 
         major_road:
-            filter: { kind: major_road }
+            filter: { type: [primary, secondary] }
             draw:
                 lines:
                     width: [[9, 1px], [14, 2px], [16, 6px], [19, 12m]]
 
         minor_road:
-            filter: { kind: minor_road, not: { kind_detail: service } }
+            filter: { type: [tertiary, residential, living_street, unclassified, road] }
             draw:
                 lines:
                     width: [[11, 0.5px], [12, 0.75px], [13, 1.0px], [14, 1.2px], [15, 2.5px], [16, 8m]]
 
         tunnel:
-            filter: { is_tunnel: true }
+            filter: { tunnel: '1' }
             draw:
                 lines:
                     color: global.tunnel_color
                     cap: round
 
         service_road:
-            filter: { kind: minor_road, kind_detail: service }
+            filter: { type: [service, track] }
             draw:
                 lines:
                     width: [[13, 0.5px], [17, 3px], [18, 4m]]
 
         path:
-            filter: { kind: [path, portage_way] }
+            filter: { type: [footway, path, pedestrian, cycleway] }
             draw:
                 lines:
                     color: global.path_color
                     width: [[14, 0.5px], [15, 1px], [19, 2m]]
-
+        # TODO: steps are not displayed
         steps:
-            filter: { kind_detail: steps }
+            filter: { type: steps }
             draw:
                 step_dashes:
-                    order: function() { return feature.sort_rank+1; }
+                    order: function() { return feature.z_order+1; }
                     cap: butt
                     color: global.path_color
                     width: [[14, 0.5px], [15, 1px], [19, 2m]]
 
         road-outline:
-            filter: { $zoom: { min: 15 }, not: { kind: [path, portage_way] } }
+            filter: { $zoom: { min: 15 }, not: { type: [footway, path, pedestrian, cycleway] } }
             draw:
                 lines:
                     outline:
@@ -97,7 +99,7 @@ layers:
                         width: function () { return 1/4 * Math.log($zoom); }
                         order: 200
             bridges:
-                filter: { is_bridge: true }
+                filter: { bridge: '1' }
                 draw:
                     lines:
                         outline:
@@ -105,13 +107,14 @@ layers:
                             order: 400
 
         path-outline:
-            filter: { $zoom: { min: 17 }, kind: [path, portage_way] }
+            filter: { $zoom: { min: 17 }, type: [footway, path, pedestrian, cycleway] }
             draw:
                 lines:
                     outline:
                         color: global.path_outline_color
                         width: function () { return 1/4 * Math.log($zoom); }
                         order: 200
+
 styles:
     step_dashes:
         base: lines

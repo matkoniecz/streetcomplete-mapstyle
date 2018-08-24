@@ -1,99 +1,120 @@
 layers:
 
-    earth:
-        data: { source: mapzen}
+    bluebackground_no_limit:
+        data: { source: terrestris}
         draw:
             polygons:
-                order: global.sort_rank
-                color: global.earth_color
+                order: 0
+                color: global.water_color
 
-    boundaries:
-        data: { source: mapzen}
-        filter: { kind: country }
+    world_boundaries_labels:
+        data: { source: terrestris}
         draw:
+            polygons:
+                order: 1
+                color: global.earth_color
             boundary_dashes:
-                order: global.sort_rank
+                order: 2
                 color: global.boundary_color
                 width: 1px
 
-    water:
-        data: { source: mapzen}
-        filter: {not: {is_tunnel: true}}
+    waterareas:
+        data: { source: terrestris, layer: [ osm_waterareas, osm_waterareas_gen0, osm_waterareas_gen1 ] }
+        filter: {not: {tunnel: '1'}}
+        draw:
+            polygons:
+                order: 5
+                join: round
+                cap: square
+                color: global.water_color
+
+    waterways:
+        data: { source: terrestris, layer: [ osm_waterways_gen0, osm_waterways_gen1, osm_waterways ] }
+        filter: {not: {tunnel: '1'}}
 
         draw:
             lines:
-                order: global.sort_rank
+                order: 5
                 join: round
                 cap: square
 
+        # TODO: this does not work
         shore_lines:
             filter: { boundary: false, $zoom: { min: 16 }, area: { min: 700 } }
             draw:
                 lines-coast:
-                    order: 220
+                    order: 6
                     width: [[16,20px],[18,10m]] # actually visually 1/3
                     color: global.water_color
 
         river_lines:
-            filter: { kind: [river, canal] }
+            filter: { type: [river, canal] }
             draw:
                 lines:
                     color: global.water_color
                     width: [[10, 1px], [17, 6px], [18, 12m]]
 
+        # TODO: this does not work
         stream_lines:
-            filter: { kind: [stream, ditch, drain], $zoom: { min: 15 }}
+            filter: { type: [stream, ditch, drain], $zoom: { min: 15 }}
             draw:
                 lines:
                     color: global.water_color
                     width: [[15, 1px], [17, 2px], [18, 5m]]
 
-        water_areas:
-            draw:
-                polygons:
-                    order: global.sort_rank
-                    color: global.water_color
 
-
-    buildings:
-        data: { source: mapzen}
-        filter: {not: { location: underground }, $zoom: { min: 16 } }
+    osm_buildings:
+        data: { source: terrestris}
+        filter: { $zoom: { min: 16 } }
 
         draw:
             buildings-style:
-                order: global.sort_rank
+                order: 40
                 color: global.building_color
-                extrude: true
+                # sadly there is no height information at all supplied by the server...
+                extrude: false
             buildings-outline-style:
-                order: function() { return feature.sort_rank+1; }
+                order: 41
                 color: global.building_outline_color
                 width: [[16, 1px], [18,2px], [19,4px]]
-                extrude: true
+                extrude: false
 
-    landuse:
-        data: { source: mapzen}
+    # TODO: this does not work (is this information  supplied at all?)
+    osm_barrierways:
+        data: { source: terrestris, layer: [osm_barrierways, barrierways, barrier]}
         draw:
-            polygons:
+            lines:
                 order: global.sort_rank
-                color: global.landuse_color
 
         city_walls:
-            filter: { kind: [city_wall, dam] }
+            filter: { type: [city_wall, dam] }
             draw:
                 buildings-outline-style:
                     order: global.sort_rank
                     color: global.building_outline_color
                     width: [[12, 4px], [18, 8m]]
         walls:
-            filter: { kind: [wall, retaining_wall, fence] }
+            filter: { type: [wall, retaining_wall, fence] }
             draw:
                 buildings-outline-style:
                     order: global.sort_rank
                     color: global.building_outline_color
                     width: [[15, 1px], [18, 2m]]
 
+    landusages:
+        data: { source: terrestris, layer: [osm_landusages, osm_landusages_gen0, osm_landusages_gen1]}
+        draw:
+            polygons:
+                order: global.sort_rank
+
+        green:
+            filter: { type: [ forest, meadow, wood, grass ]}
+            draw:
+                polygons:
+                    color: global.landuse_color
+
         squares:
-            filter: { kind: [pedestrian], $zoom: { min: 17 } }
+            filter: { type: [pedestrian], $zoom: { min: 17 } }
             draw:
                 lines:
                     color: global.square_outline_color
